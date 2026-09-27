@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# Caches / testing
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs / temporary files
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local audio / test recordings
+my_voice.wav
+*.mp3
+*.m4a
+*.ogg
+*.flac
+
+# Training dataset
+data/
+
+# Local backup / temporary app files
+app_old.py
+app_beautiful.py
+
+# Python distribution files
+build/
+dist/
+*.egg-info/

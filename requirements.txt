@@ -1,0 +1,18 @@
+# Core application
+gradio
+numpy
+librosa
+torch
+joblib
+
+# Machine-learning / notebook tools
+scikit-learn
+pandas
+matplotlib
+seaborn
+jupyter
+ipykernel
+
+# Audio recording / WAV utilities used in the notebook
+sounddevice
+scipy
