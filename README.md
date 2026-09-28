@@ -2,6 +2,12 @@
 
 A speech-emotion recognition application built with Python, PyTorch, Librosa, and Streamlit. The project extracts MFCC-based audio features from a short voice recording and uses an advanced 1D convolutional neural network (CNN) trained on the RAVDESS emotional speech dataset to predict one of eight emotions.
 
+## 🚀 Live Demo
+
+**[Launch the Emotion Recognition AI](https://codhak-emotion-recognition.streamlit.app/)**
+
+Try the deployed Streamlit application directly in your browser. You can record a short voice sample or upload an audio file and view the model's predicted emotion and probability breakdown.
+
 ## ✨ Current application
 
 The main user interface is the Streamlit app in `streamlit_app.py`.
@@ -204,9 +210,13 @@ The advanced CNN was trained/evaluated using the extracted feature tensors witho
 
 ## 🌐 Deployment
 
-The Streamlit application can be deployed from the GitHub repository using a Streamlit-compatible hosting service.
+The application is deployed on **Streamlit Community Cloud** and is connected to the GitHub repository.
 
-The deployment should use:
+### Live application
+
+**[https://codhak-emotion-recognition.streamlit.app/](https://codhak-emotion-recognition.streamlit.app/)**
+
+The deployment uses:
 
 ```text
 Main file: streamlit_app.py
