@@ -1,23 +1,32 @@
 # 🎭 Emotion Recognition AI
 
-A speech emotion recognition project built with **Python, PyTorch, Librosa, and Gradio**.
+A speech-emotion recognition application built with Python, PyTorch, Librosa, and Streamlit. The project extracts MFCC-based audio features from a short voice recording and uses an advanced 1D convolutional neural network (CNN) trained on the RAVDESS emotional speech dataset to predict one of eight emotions.
 
-The application takes a short voice recording, extracts acoustic features from the speech, and uses a trained 1D Convolutional Neural Network (CNN) to predict the expressed emotion.
+## ✨ Current application
 
-## ✨ Features
+The main user interface is the Streamlit app in `streamlit_app.py`.
 
-- 🎙️ Record or upload a voice clip
-- ⏱️ Maximum analysis length of 10 seconds
-- 🧠 Advanced 1D CNN emotion classifier
-- 📊 Confidence/probability breakdown for all emotion classes
-- 💬 Random suggested phrases to make testing more interesting
-- 🧹 Clear button for starting a new test
-- 🌙 Custom dark/futuristic Gradio interface
-- 💻 Automatically uses CUDA when a compatible GPU is available, otherwise CPU
+The interface is designed around a simple three-step flow:
 
-## 🎯 Supported Emotions
+1. **Read a suggested phrase** or speak naturally.
+2. **Record up to 10 seconds** of audio.
+3. **Analyze the recording** and view the detected emotion plus the complete probability breakdown.
 
-The model recognizes 8 emotion classes:
+The interface includes:
+
+- Dark, responsive UI
+- Suggested-phrase generator
+- Browser microphone recording
+- Automatic 10-second maximum processing window
+- Emotion result with emoji and confidence
+- Probability bars for all eight emotion classes
+- Audio duration and feature-shape statistics
+- Clear recording control
+- Cached model loading for faster repeated predictions
+
+## 🧠 Supported emotions
+
+The trained classifier predicts:
 
 - Angry
 - Calm
@@ -28,184 +37,225 @@ The model recognizes 8 emotion classes:
 - Sad
 - Surprised
 
-## 🧠 Model
+## 🤖 Model
 
-The project uses the **RAVDESS (Ryerson Audio-Visual Database of Emotional Speech and Song)** dataset.
+The project uses an advanced 1D CNN named `AdvancedEmotionCNN`.
 
-The advanced model uses:
+### Architecture
 
-- Sample rate: **16 kHz**
-- MFCC features: **40**
-- Delta MFCC: **40**
-- Delta-delta MFCC: **40**
-- Total input channels: **120**
-- Target sequence length: **165 frames**
-- Architecture: **1D CNN + Batch Normalization + ReLU + Max Pooling**
-- Adaptive average pooling before classification
-- Dropout in the classifier
+```text
+Input: 120 × 165
+       │
+       ├── Conv1D 120 → 64
+       ├── BatchNorm
+       ├── ReLU
+       ├── MaxPool
+       │
+       ├── Conv1D 64 → 128
+       ├── BatchNorm
+       ├── ReLU
+       ├── MaxPool
+       │
+       ├── Conv1D 128 → 256
+       ├── BatchNorm
+       ├── ReLU
+       ├── Adaptive Average Pool
+       │
+       ├── Linear 256 → 128
+       ├── ReLU
+       ├── Dropout 0.4
+       └── Linear 128 → 8
+```
 
-The advanced model achieved approximately **74.31% test accuracy** during the project's evaluation.
+The recorded audio is converted into:
 
-## 📁 Project Structure
+- 40 MFCC features
+- 40 delta features
+- 40 delta-delta features
+
+These are concatenated into **120 feature channels** and padded/truncated to **165 time frames**.
+
+## 📊 Training
+
+Dataset: **RAVDESS (Ryerson Audio-Visual Database of Emotional Speech and Song)**
+
+The advanced model was trained using:
+
+- 1,440 audio files
+- 80/20 stratified train/test split
+- 1,152 training samples
+- 288 test samples
+- Adam optimizer
+- Learning rate: `0.0005`
+- Weight decay: `1e-4`
+- Cross-entropy loss
+- 25 training epochs
+
+The recorded test accuracy for the advanced CNN was **74.31%**.
+
+> Accuracy is a dataset test result and should not be interpreted as a guarantee of the model's performance on every real-world speaker or recording environment.
+
+## 📁 Project structure
 
 ```text
 CodeAlpha_Emotion_Recognition/
 │
-├── app.py
+├── data/
+│   └── Audio_Speech_Actors_01-24/
+│
 ├── emotion_recognition.ipynb
+├── streamlit_app.py
+├── app.py
 │
 ├── emotion_cnn_advanced.pth
 ├── emotion_cnn.pth
-│
 ├── label_encoder_advanced.pkl
 ├── label_encoder.pkl
-├── scaler.pkl
-│
 ├── mfcc_mean.npy
 ├── mfcc_std.npy
 │
-├── my_voice.wav
 ├── requirements.txt
 ├── README.md
-│
-└── data/
-    └── Audio_Speech_Actors_01-24/
-        ├── Actor_01/
-        ├── Actor_02/
-        └── ...
+└── .gitignore
 ```
 
-> The trained model files and preprocessing files are required by `app.py`. The RAVDESS dataset is used for training/evaluation and does not need to be loaded by the GUI for normal prediction.
+`app.py` is the earlier Gradio version of the interface. `streamlit_app.py` is the current Streamlit interface.
 
-## 🚀 Installation
+## ⚙️ Installation
 
-### 1. Clone or download the project
+Create and activate a virtual environment:
 
-Place the project folder somewhere convenient on your computer.
+### Windows
 
-### 2. Open the project in VS Code
-
-Open the `CodeAlpha_Emotion_Recognition` folder in VS Code.
-
-### 3. Create a virtual environment
-
-Windows:
-
-```powershell
+```bash
 python -m venv .venv
-```
-
-### 4. Activate the virtual environment
-
-PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-Command Prompt:
-
-```cmd
 .venv\Scripts\activate
 ```
 
-### 5. Install the dependencies
+Install the dependencies:
 
-```powershell
-python -m pip install --upgrade pip
+```bash
 pip install -r requirements.txt
 ```
 
-## ▶️ Run the Application
+## ▶️ Run locally
 
-Make sure the virtual environment is active, then run:
+From the project folder:
 
-```powershell
-python app.py
+```bash
+streamlit run streamlit_app.py
 ```
 
-Gradio will start a local web application, normally at:
+Streamlit will open the application in the browser, normally at:
 
 ```text
-http://127.0.0.1:7860
+http://localhost:8501
 ```
 
-Open the address shown in the terminal in your browser.
+## 🎙️ Using the application
 
-## 🎙️ How to Use
+1. Open the Streamlit app.
+2. Read the suggested phrase or speak naturally.
+3. Click the microphone recorder.
+4. Record a short sample.
+5. Click **Analyze emotion**.
+6. View the detected emotion and confidence.
+7. Inspect the probability breakdown to see how the model distributed its prediction.
+8. Use **Clear recording** before making another test recording if needed.
 
-1. Open the application.
-2. Read the suggested phrase.
-3. Record your voice or upload an audio clip.
-4. Keep the recording at **10 seconds or less**.
-5. Click **Analyze Emotion**.
-6. The application displays:
-   - Detected emotion
-   - Confidence
-   - Probability distribution
-   - Audio duration
-   - Feature information
-7. Click **Clear** to start another test.
+Short test recordings are intended for inference only. The current application does **not** collect user recordings for retraining.
 
-## 🔬 Training Pipeline
+## 🔬 Feature extraction
 
-The notebook contains the machine-learning workflow:
-
-1. Load the RAVDESS dataset.
-2. Extract audio features with Librosa.
-3. Extract 40 MFCCs.
-4. Calculate delta and delta-delta features.
-5. Combine the three feature sets into 120 channels.
-6. Pad or trim the time dimension to 165 frames.
-7. Split the data into training and testing sets.
-8. Train the advanced 1D CNN with PyTorch.
-9. Evaluate the trained model.
-10. Save the trained model and label encoder.
-11. Use the saved artifacts for GUI inference.
-
-## 📦 Important Model Files
-
-`app.py` expects these files to be available in the same project directory:
+Audio is loaded at **16 kHz** and converted to mono. The feature pipeline is:
 
 ```text
-emotion_cnn_advanced.pth
-label_encoder_advanced.pkl
-mfcc_mean.npy
-mfcc_std.npy
+Audio
+  ↓
+40 MFCC
+  ↓
+Delta
+  ↓
+Delta-Delta
+  ↓
+Concatenate
+  ↓
+120 × time features
+  ↓
+Pad / truncate to 120 × 165
+  ↓
+Advanced CNN
+  ↓
+8 emotion probabilities
 ```
 
-If any of these files are missing, the application will not be able to load the trained model or its preprocessing information.
+## 🗂️ Important model files
 
-## ⚠️ Notes
-
-- This is an **emotion classification experiment**, not a reliable psychological assessment.
-- Speech emotion recognition can be affected by microphone quality, background noise, accent, speaking style, volume, and the way emotions are expressed.
-- A model prediction should therefore be treated as an estimate rather than a definitive statement about a person's emotional state.
-- The current application does not use recorded user voices to retrain the model.
-
-## 🛠️ Technologies Used
-
-| Technology | Purpose |
+| File | Purpose |
 | --- | --- |
-| Python | Main programming language |
-| PyTorch | Neural network and inference |
-| Librosa | Audio loading and feature extraction |
-| NumPy | Numerical processing |
-| Scikit-learn | Dataset splitting, label encoding and evaluation |
-| Joblib | Saving/loading preprocessing objects |
-| Gradio | Web-based user interface |
-| Jupyter Notebook | Training and experimentation |
-| SoundDevice | Optional microphone recording in the notebook |
-| SciPy | Saving recorded WAV files in the notebook |
+| `emotion_cnn_advanced.pth` | Trained advanced CNN weights |
+| `label_encoder_advanced.pkl` | Converts model class indices to emotion names |
+| `mfcc_mean.npy` | Saved feature normalization statistics from the notebook pipeline |
+| `mfcc_std.npy` | Saved feature normalization statistics from the notebook pipeline |
+| `emotion_recognition.ipynb` | Training and experimentation notebook |
+| `streamlit_app.py` | Current web application |
 
-## 📚 Dataset
+The advanced CNN was trained/evaluated using the extracted feature tensors without applying the later saved mean/std normalization to the training input. The current Streamlit inference path therefore keeps the same input convention as the successful advanced model evaluation.
 
-The model was trained using the **RAVDESS** emotional speech dataset.
+## 🌐 Deployment
 
-RAVDESS contains acted speech recordings representing multiple emotional categories. The project uses the speech recordings to learn patterns associated with the eight emotion classes listed above.
+The Streamlit application can be deployed from the GitHub repository using a Streamlit-compatible hosting service.
 
-## 👨‍💻 Project
+The deployment should use:
 
-### CodeAlpha Internship — Emotion Recognition
+```text
+Main file: streamlit_app.py
+Dependencies: requirements.txt
+```
 
-Built as a machine-learning project combining speech processing, deep learning, and an interactive web interface.
+The model files (`.pth`, `.pkl`, and `.npy`) must also be present in the repository because the application loads them at runtime.
+
+## 🛠️ Technologies
+
+- Python
+- PyTorch
+- Librosa
+- NumPy
+- Scikit-learn
+- Joblib
+- Jupyter Notebook
+- Streamlit
+- Git / GitHub
+
+## ⚠️ Limitations
+
+This project is a machine-learning demonstration and internship project. Speech emotion recognition is affected by factors such as:
+
+- Speaker differences
+- Accent and pronunciation
+- Microphone quality
+- Background noise
+- Recording conditions
+- Emotional intensity
+- Differences between acted and natural emotion
+
+The RAVDESS dataset contains acted emotional speech, so real-world performance can differ from the reported test accuracy.
+
+## 🚀 Future improvements
+
+Possible future work includes:
+
+- Larger and more diverse speech datasets
+- Better handling of background noise
+- Data augmentation
+- Model calibration
+- More robust real-world evaluation
+- Additional audio features
+- Improved inference on naturally spoken emotion
+- Optional user-feedback collection for a future retraining pipeline
+
+## 👤 Project
+
+### CodeAlpha Emotion Recognition Project
+
+Built as a machine-learning internship project and developed as a practical exploration of speech processing, feature engineering, CNNs, model inference, and Python web application deployment.
